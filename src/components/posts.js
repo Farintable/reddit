@@ -19,7 +19,7 @@ export default class Posts extends React.Component{
                 {postDataChildren.map((post, index) => {
                     return (
                         <div key={index} style={{marginTop: '20px'}}>
-                            <div style={{marginBottom: '10px'}}>{post.data.title}</div>
+                            <a target={'blank'} href={post.data.url} style={{marginBottom: '10px'}}>{post.data.title}</a>
                             <div style={{marginBottom: '10px'}}>{ReactHtmlParser(ReactHtmlParser(post.data.selftext_html ? post.data.selftext_html.substring(0, 299) : null))}</div>
                             <div style={{marginBottom: '10px'}}>{post.data.author_fullname}</div>
                             <div style={{marginBottom: '10px'}}>{moment.unix(post.data.created).format('DD-MM-YYYY')}</div>
