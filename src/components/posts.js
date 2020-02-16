@@ -1,31 +1,35 @@
 import React from "react";
-import moment from 'moment';
-import ReactHtmlParser from 'react-html-parser';
+import Post from './post'
 
 export default class Posts extends React.Component{
-    constructor(props) {
-        super(props);
-
-    }
 
     render(){
 
-        let posts = this.props.posts;
-        let postsData = posts.data || [];
-        let postDataChildren = postsData.children || [];
+        const {loading, posts, error} = this.props;
+
+        const postsTemplate = () => {
+
+            return (
+                <React.Fragment>
+                    {posts.map((post, index) => {
+                        return (
+                            <Post key={index} data={post.data} />
+                        )
+                    })}
+                </React.Fragment>
+            )};
+
+        const isLoading = loading ? <div>Загрузка</div> : null;
+        const postRender = !loading ? postsTemplate() : null;
+        const isError = error ? <div>Запрошенные посты не найдены</div> : null;
+
+
 
         return(
             <React.Fragment>
-                {postDataChildren.map((post, index) => {
-                    return (
-                        <div key={index} style={{marginTop: '20px'}}>
-                            <a target={'blank'} href={post.data.url} style={{marginBottom: '10px'}}>{post.data.title}</a>
-                            <div style={{marginBottom: '10px'}}>{ReactHtmlParser(ReactHtmlParser(post.data.selftext_html ? post.data.selftext_html.substring(0, 299) : null))}</div>
-                            <div style={{marginBottom: '10px'}}>{post.data.author_fullname}</div>
-                            <div style={{marginBottom: '10px'}}>{moment.unix(post.data.created).format('DD-MM-YYYY')}</div>
-                        </div>
-                    )
-                })}
+                {isError}
+                {isLoading}
+                {postRender}
             </React.Fragment>
         )
     }

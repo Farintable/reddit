@@ -8,7 +8,9 @@ class App extends React.Component{
 
     this.state = {
         query: '',
-        posts: []
+        posts: [],
+        error: false,
+        loading: false,
     };
 
     this.handlerChange = this.handlerChange.bind(this);
@@ -18,8 +20,16 @@ class App extends React.Component{
 
   uploadPosts(){
       fetch(`https://www.reddit.com/r/${this.state.query}/hot.json`)
-          .then(res => res.json())
-          .then(body => this.setState({posts: body}))
+          .then(res => {
+              this.setState({loading: true});
+              return res.json()
+          })
+          .then(body => this.setState({posts: body.data.children, loading: false, error: false}))
+          .catch(res => {
+              if(!res.ok){
+                return this.setState({error: true, posts: []})
+              }
+          })
   }
 
   handlerChange(event){
@@ -30,8 +40,12 @@ class App extends React.Component{
     return(
         <React.Fragment>
             <input onChange={this.handlerChange} type="text"/>
-            <button onClick={() => this.uploadPosts()}>Получить</button>
-            <Posts posts={this.state.posts} />
+            <button onClick={() => this.uploadPosts()}>Показать</button>
+            <Posts
+                error={this.state.error}
+                loading={this.state.loading}
+                posts={this.state.posts}
+            />
         </React.Fragment>
     )
   }
